@@ -1,0 +1,80 @@
+-- query 1  What is the employee id of the highest paid employee?
+
+
+SELECT emp_id AS employee, salary AS highest_salary
+FROM salaries
+HAVING salary = (SELECT MAX(salary) AS highest_salary FROM salaries)
+
+
+-- query 2 What is the name of youngest employee?
+
+SELECT first_name, last_name, birth_date
+FROM employees
+ORDER BY birth_date DESC
+LIMIT 1
+
+
+-- query 3 What is the name of the first hired employee? 
+
+SELECT first_name, last_name, hire_date
+FROM employees
+ORDER BY hire_date
+LIMIT 1
+
+-- query 4 What percentage of employees are male?
+
+SELECT (SELECT COUNT(*) AS Cnt FROM employees WHERE gender = 'M')/count(*)*100 AS Percentage_of_Male_Employees
+FROM employees
+
+
+-- query 5 Show the employee count by department name wise, sorted alphabetically on department name.
+
+SELECT dept_name, COUNT(emp_id) AS Total
+FROM departments d
+JOIN dept_emp de
+ON d.dept_no = de.dept_no
+GROUP BY d.dept_name
+ORDER BY d.dept_name
+
+-- query 6  Count the number of employees by each calendar year (taking the value of year from from_date)
+
+SELECT EXTRACT(year from from_date) AS calendar_year, COUNT(*) AS Total
+FROM dept_emp
+GROUP BY calendar_year
+ORDER BY calendar_year
+
+-- query 7 Count the number of employees by each calendar year (taking the value of year from from_date) 
+-- ordered by calendar year exlcuding all years before 1990. Divide the employee count based on gender.
+
+SELECT EXTRACT(year from de.from_date) AS calendar_year, COUNT(*) AS Total, e.gender
+FROM dept_emp de
+JOIN employees e
+ON de.emp_id=e.emp_id
+
+GROUP BY calendar_year, e.gender HAVING calendar_year >= 1990
+ORDER BY calendar_year, e.gender
+
+-- query 8 What is the number of managers hired each calendar year. 
+
+SELECT EXTRACT(year from from_date) AS year_hired, COUNT(*) AS total
+FROM dept_manager 
+GROUP BY year_hired
+ORDER BY year_hired
+
+
+-- query 9 What will be the department wise break up of managers?
+
+SELECT dept_name AS Department, COUNT(emp_id) AS Total_Number_of_Managers
+FROM dept_manager de
+JOIN departments d
+ON de.dept_no=d.dept_no
+GROUP BY dept_name
+
+-- query 10 What is the number of male managers and female managers hired each calendar year from the year 1990 onwards?
+
+SELECT EXTRACT(year from dm.from_date) AS calendar_year, COUNT(dm.emp_id) AS Total_Number_of_Managers, e.gender AS Gender
+FROM dept_manager dm
+JOIN employees e
+ON dm.emp_id=e.emp_id
+GROUP BY calendar_year, e.gender HAVING calendar_year >= 1990
+ORDER BY calendar_year, e.gender

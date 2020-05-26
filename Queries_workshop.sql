@@ -220,7 +220,7 @@ ORDER BY temp.maxprice DESC
 
 ---
  
--- PRODUCTS
+-- JOINS
 
 ---
 
